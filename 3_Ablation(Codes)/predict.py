@@ -1,14 +1,12 @@
 import os
 import json
-
 import torch
 from PIL import Image
 from torchvision import transforms
 import matplotlib.pyplot as plt
-
 import pandas as pd
-
-from se_model import AlexNetWithSE
+import argparse
+from se_model import AlexNetWithSE, save_model_structure
 # from modelvgg import vgg
 # from modelalex import AlexNet
 # from modeldense import densenet201
@@ -21,14 +19,30 @@ os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    current_se_pos = 1 # Check point Same as train.py
-    squeeze_ratio = 32 # Check point
-    trans_con = "Face" # Check point
-    mask_con = "Full" # Check point
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--se_pos', type = int, help = '1-4')
+    parser.add_argument('--reduction', type = int, help = '2/4/8/16/32')
+    parser.add_argument('--trans', type = str, default = 'Face', help = 'Face or Object')
+    parser.add_argument('--mask', type = str, default = 'Full', help = 'Full/E/N/M')
+    args = parser.parse_args()
+
+    current_se_pos = args.se_pos
+    squeeze_ratio = args.reduction
+    trans_con = args.trans
+    mask_con = args.mask
+
+    print (f"Prediction: Pos = {current_se_pos}, Ratio = {squeeze_ratio}, TransCondition = {trans_con}, MaskCondition = {mask_con}")
+
+    # # If you want to train and change the condition by yourself, uncommand these lines
+    # current_se_pos = 1 # Check point Same as train.py
+    # squeeze_ratio = 4 # Check point
+    # trans_con = "Face" # Check point
+    # mask_con = "Full" # Check point
+
     exp_name = f"SeC{current_se_pos}_{trans_con}Based_squeeze{squeeze_ratio}"
     root_path = r'/home/zhang/share/home/scz6112/AffectNet/ConvResults'
     exp_dir = os.path.join(root_path, exp_name)
-    inf_dir = os.path.join(exp_dir, 'Predict')
+    inf_dir = os.path.join(exp_dir, 'predict')
 
     os.makedirs(inf_dir, exist_ok = True)
 
@@ -45,6 +59,9 @@ def main():
     assert os.path.exists(weights_path), "file: '{}' dose not exist.".format(weights_path)
     model.load_state_dict(torch.load(weights_path), strict = False)
     model.eval()
+
+    # print and save model
+    save_model_structure(model, exp_dir, filename="current_model_arch")
 
     for i in range(21):
         print(i)
