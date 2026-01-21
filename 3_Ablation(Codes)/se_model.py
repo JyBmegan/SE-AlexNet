@@ -1,9 +1,11 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import os
+import pandas as pd
 
 class SEBlock(nn.Module):
-    def __init__(self, in_channels, reduction=16):   # check step 2: the reduction of SE block
+    def __init__(self, in_channels, reduction=4):   # check step 2: the reduction of SE block
         super(SEBlock, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc1 = nn.Linear(in_channels, in_channels // reduction, bias=False)
@@ -25,7 +27,7 @@ class SEBlock(nn.Module):
 
 
 class AlexNetWithSE(nn.Module):  
-    def __init__(self, num_classes = 8, se_pos = None):
+    def __init__(self, num_classes = 8, se_pos = None, reduction = 4):
         """
         We difine se_pos (int) as the insert location of SE module in Convolutional Layers (1-4):
         e.g.,
@@ -43,7 +45,7 @@ class AlexNetWithSE(nn.Module):
             nn.MaxPool2d(kernel_size=3, stride=2)
         ]
         if se_pos == 1:
-            layers.append(SEBlock(64))
+            layers.append(SEBlock(64, reduction = reduction))
 
         # Condition 2: Conv2 (out 192)
         layers += [
@@ -52,7 +54,7 @@ class AlexNetWithSE(nn.Module):
             nn.MaxPool2d(kernel_size=3, stride=2)
         ]
         if se_pos == 2:
-            layers.append(SEBlock(192))
+            layers.append(SEBlock(192, reduction = reduction))
 
         # Condition 3: Conv3 (out 384)
         layers += [
@@ -60,7 +62,7 @@ class AlexNetWithSE(nn.Module):
             nn.ReLU(inplace=True),
         ]
         if se_pos == 3:
-            layers.append(SEBlock(384))
+            layers.append(SEBlock(384, reduction = reduction))
 
         # Condition 4: Conv4 (out 256)
         layers += [
@@ -68,7 +70,7 @@ class AlexNetWithSE(nn.Module):
             nn.ReLU(inplace=True),
         ]
         if se_pos == 4:
-            layers.append(SEBlock(256))
+            layers.append(SEBlock(256, reduction = reduction))
 
         # Condition 5: Conv5 (out 256) = SE-1 (insert before fc6), So we wouldn't do it again
         layers += [
@@ -102,4 +104,25 @@ class AlexNetWithSE(nn.Module):
         # Pass through classifier
         x = self.classifier(x)
         return x
+    
+def save_model_structure(model, output_dir, filename = "current_model_structure.csv"):
+    
+    layer_info = []
 
+    for name, module in model.named_modules():
+        if name == "":
+            continue
+        params = sum(p.numel() for p in module.parameters())
+        desc = str(module).split('\n')[0]
+        layer_info.append({
+            "Layer Name": name,
+            "Layer Type": module.__class__.__name__,
+            "Parameters": params,
+            "Configuration": desc
+        })
+    
+    df = pd.DataFrame(layer_info)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    save_path = os.path.join(output_dir, filename)
+    df.to_csv(save_path, index=False)

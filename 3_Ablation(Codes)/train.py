@@ -8,7 +8,8 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from se_model import AlexNetWithSE
+import argparse
+from se_model import AlexNetWithSE, save_model_structure
 from mydataset import affectnet
 
 from collections import Counter
@@ -121,10 +122,32 @@ def main():
     # test_data_iter = iter(validate_loader)
     # test_image, test_label = test_data_iter.next()
 
-    current_se_pos = 1 # check: insert location in convolutional layer
-    squeeze_ratio = 16 # Check point
-    trans_con = "Face" # Check point
-    trans_path = "face" # Check point
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--se_pos', type = int, help = '1-4')
+    parser.add_argument('--reduction', type = int, help = '2/4/8/16/32')
+    parser.add_argument('--trans', type = str, default = 'Face', help = 'Face or Object')
+    args = parser.parse_args()
+
+    current_se_pos = args.se_pos
+    squeeze_ratio = args.reduction
+    trans_con = args.trans
+
+    # because of the orginal weight path, we have to do so
+    if trans_con == 'Face':
+        trans_path = 'face'
+    elif trans_con == 'Object':
+        trans_path = 'object'
+    else:
+        raise ValueError(f"Unknow Pretrain Type: {trans_con}")
+    
+    print (f"Training: Pos = {current_se_pos}, Ratio = {squeeze_ratio}, TransCondition = {trans_con}, OriginalWeightPath = {trans_path}")
+
+    # # If you want to train and change the condition by yourself, uncommand these lines
+    # current_se_pos = 1 # check: insert location in convolutional layer
+    # squeeze_ratio = 4 # Check point
+    # trans_con = "Face" # Check point
+    # trans_path = "face" # Check point
+    
     exp_name = f"SeC{current_se_pos}_{trans_con}Based_squeeze{squeeze_ratio}"
 
     net = AlexNetWithSE (num_classes=8, se_pos = current_se_pos)
@@ -136,6 +159,9 @@ def main():
 
     # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # print (AlexNetWithSE().to(device))
+    
+    # print and save model structure
+    save_model_structure(net, output_dir, filename = "current_model_arch.csv")
 
     model_weight_path = f'/media/zhang/97e9fbd4-1a76-43b2-a56c-570c3f238fa9/yfLi/project-paper3/weights/{trans_path}/AlexNet.pth' 
 
