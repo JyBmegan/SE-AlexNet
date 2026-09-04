@@ -1,4 +1,15 @@
-# SE-AlexNet: Enhancing Face Perception via Dimension Reduction
+# SE-AlexNet: Squeeze-and-Excitation Algorithm for Efficient Face Recognition
+
+<p align="center">
+    <a href="https://jybmegan.github.io/SE-AlexNet/"><img src="https://img.shields.io/badge/Project-Page-blue" alt="Project Page"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-green" alt="License"></a>
+</p>
+
+
+<p align="center">
+    <a href="./0_InputImages/"><img src="https://img.shields.io/badge/Dataset-Github-orange" alt="Dataset: DFEW"></a>
+    <a href="https://huggingface.co/JiayuMBao/SE-AlexNet"><img src="https://img.shields.io/badge/Model%20Weights-Hugging%20Face-yellow" alt="Model Weights: Hugging Face"></a>
+</p>
 
 
 ## 1. Experimental Conditions & Variables
@@ -104,7 +115,6 @@ The MATLAB code used to fit the psychometric functions (Experiment 1 & 2 behavio
 
 *Note: The `3_Code4FitCurve` folder in this repository primarily contains the sorted input data (`.csv`) and output figures required for the analysis pipeline.*
 
-
 ## 4. Usage Guidelines
 
 ### Model Training
@@ -177,7 +187,7 @@ output_dir = ...         # Ensure the pre-trained weight path is correct
 
 **Output:** Upon completion, a folder named after the condition (e.g., `SeC1_FaceBased_squeeze32`) will be created containing:
 
-**Weight Path**: https://drive.google.com/drive/folders/1-zN6m67eHEvylYtCxSZ1m8g-8IsMF7L_?usp=drive_link
+**Weight Path:** Download the trained weights from the [SE-AlexNet Hugging Face repository](https://huggingface.co/JiayuMBao/SE-AlexNet).
 
 * AlexNet.pth (Trained Weights)
 
