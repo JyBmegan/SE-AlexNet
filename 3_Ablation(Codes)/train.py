@@ -94,13 +94,13 @@ def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("using {} device.".format(device))
 
-    train_dataset = affectnet(dataset_dir=r'/home/zhang/share/home/scz6112/AffectNet/train_set/images',
-                                         csv_path=r'/home/zhang/share/home/scz6112/AffectNet/AffectNet/modified_train_28000_sc.csv')
-    validate_dataset = affectnet(dataset_dir=r'/home/zhang/share/home/scz6112/AffectNet/val_set/images',
-                                         csv_path=r'/home/zhang/share/home/scz6112/AffectNet/AffectNet/modified_val_1000_sc.csv')
+    train_dataset = affectnet(dataset_dir=r'../AffectNet/train_set/images',  # TODO: replace with your AffectNet training images directory
+                                         csv_path=r'../AffectNet/AffectNet/modified_train_28000_sc.csv')  # TODO: replace with your AffectNet training labels CSV
+    validate_dataset = affectnet(dataset_dir=r'../AffectNet/val_set/images',  # TODO: replace with your AffectNet validation images directory
+                                         csv_path=r'../AffectNet/AffectNet/modified_val_1000_sc.csv')  # TODO: replace with your AffectNet validation labels CSV
     
 
-    # a_csv_path = r'/home/zhang/share/home/scz6112/AffectNet/AffectNet/modified_train_28000_sc.csv'
+    # a_csv_path = r'../AffectNet/AffectNet/modified_train_28000_sc.csv'
     # df_debug = pd.read_csv(a_csv_path)
     # counts = df_debug['expression'].value_counts().sort_index()
     # print(counts)
@@ -153,7 +153,7 @@ def main():
     net = AlexNetWithSE (num_classes=8, se_pos = current_se_pos)
     net.to(device)
 
-    output_dir = f'/home/zhang/share/home/scz6112/AffectNet/ConvResults/{exp_name}' 
+    output_dir = f'../AffectNet/ConvResults/{exp_name}'   # TODO: replace with your output directory
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -163,7 +163,7 @@ def main():
     # print and save model structure
     save_model_structure(net, output_dir, filename = "current_model_arch.csv")
 
-    model_weight_path = f'/media/zhang/97e9fbd4-1a76-43b2-a56c-570c3f238fa9/yfLi/project-paper3/weights/{trans_path}/AlexNet.pth' 
+    model_weight_path = f'../weights/{trans_path}/AlexNet.pth'   # TODO: replace with your model weights (.pth)
 
     load_weights(net, model_weight_path, device)
 

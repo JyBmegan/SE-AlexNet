@@ -1,56 +1,94 @@
-# SE-AlexNet
+# SE-AlexNet: Squeeze-and-Excitation Algorithm for Efficient Face Recognition
 
-SE-AlexNet 模型代码、训练指标与 21 点预测存档。
+<p align="center">
+    <a href="https://jybmegan.github.io/SE-AlexNet/"><img src="https://img.shields.io/badge/Project-Page-blue" alt="Project Page"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-green" alt="License"></a>
+    <a href="./0_InputImages/"><img src="https://img.shields.io/badge/Dataset-Github-orange" alt="Dataset"></a>
+    <a href="https://huggingface.co/JiayuMBao/SE-AlexNet"><img src="https://img.shields.io/badge/Model%20Weights-Hugging%20Face-yellow" alt="Model Weights"></a>
+</p>
 
-## 仓库内容
+This repository contains the code and results for the paper *A squeeze-and-excitation computational model for efficient face cognition*. It inserts Squeeze-and-Excitation (SE) channel-recalibration modules into a classical CNN (AlexNet) and studies how compression ratio, insertion position, and pretraining background shape the match between model outputs and human facial-emotion judgments.
 
-| 目录 | 内容 |
-| --- | --- |
-| `0_InputImages/` | 每个刺激条件的 21 张面孔图像 |
-| `1_Codes/` | AlexNet、VGG16、SE-AlexNet（三种 FC 插入位置）模型与训练代码 |
-| `2_Results/1_Predict21Datapoints/` | 136 个预测文件：120 个 SE-AlexNet 条件 + 16 个 AlexNet/VGG16 基线 |
-| `3_Ablation(Codes)/` `4_Ablation(Results)/` | 卷积层插入的消融实验 |
+## Repository structure
 
-## 校验预测存档
+| Path | Contents |
+| :--- | :--- |
+| `0_InputImages/` | 21 test faces per condition (`Full`, `E`, `N`, `M`) |
+| `1_Codes/` | AlexNet, VGG16, and SE-AlexNet (three FC insertion locations) code, plus the training script and Grad-CAM scripts |
+| `2_Results/` | Training curves, 136 prediction CSVs, Grad-CAM heatmaps and numeric data |
+| `3_Ablation(Codes)/` `4_Ablation(Results)/` | Convolutional-layer SE ablation (`SE-Conv-L1~L4`, not in the paper) |
+| `5_FittingCurveAnalysis/` | Copy of the psychometric-curve fitting code and its data/results (canonical code lives in a separate repo, see below) |
+| `scripts/` | Validation script for the prediction archive |
+| `docs/` | GitHub Pages project page |
+
+## Reproduce
+
+### Environment
 
 ```bash
 pip install -r requirements.txt
+```
+
+### Train
+
+The FC-layer SE models (the paper) use `1_Codes/train.py`. Before running it, copy `se_model.py` and `mydataset.py` from `3_Ablation(Codes)/` into the same directory, and set the AffectNet dataset and pretrained-weight paths (they are hard-coded absolute paths in the script). Then:
+
+```bash
+python 1_Codes/train.py
+```
+
+The convolutional-layer SE ablation (not in the paper) lives in `3_Ablation(Codes)/` and takes command-line arguments:
+
+```bash
+cd 3_Ablation(Codes)
+python run_all.py                                            # run every condition
+python train.py --se_pos 1 --reduction 16 --trans Face        # one condition
+```
+
+### Predict
+
+Prediction writes one 21-row CSV of "happy" probabilities per condition. The archived outputs are in `2_Results/1_Predict21Datapoints/` (120 SE-AlexNet conditions + 16 baselines). Check the archive with:
+
+```bash
 python3 scripts/validate_prediction_archive.py
 ```
 
-检查 120 个 SE-AlexNet + 16 个基线文件、每个文件恰好 21 个 [0,1] 概率，并生成 `2_Results/Prediction_Archive_Manifest.csv`（含每个文件的行数、取值范围与 SHA-256 哈希）。
-
-## 复现心理物理分析
-
-预测存档同时收录于 [PsychometricFittingCurve](https://github.com/JyBmegan/PsychometricFittingCurve)，在那里运行 `reproduce_psychometric_results.py` 即得到论文的 PSE / ANOVA 表。
-
-## 训练模型
-
-训练权重发布在 [Hugging Face](https://huggingface.co/JiayuMBao/SE-AlexNet)。设置 `1_Codes/train.py` 中的数据集与预训练权重路径后运行：
+For the convolutional-layer ablation, run:
 
 ```bash
-python3 1_Codes/train.py
+cd 3_Ablation(Codes)
+python predict.py --se_pos 1 --reduction 16 --trans Face --mask Full
 ```
 
-## 预测文件命名
+### Psychometric-curve fitting
 
-`Location-{1,2,3}-{FaceBased,ObjectBased}-{Full,E,N,M}-{2,4,8,16,32}.csv`
+Fit the psychometric curves and compute PSE / RMSE / ANOVA. See <https://github.com/JyBmegan/PsychometricFittingCurve>.
 
-- 插入位置：`Location-1` 前序（FC6 之前）、`Location-2` 中序（FC6 与 FC7 之间）、`Location-3` 后序（FC7 与 FC8 之间）。
-- 预训练：`FaceBased` 基于面孔、`ObjectBased` 基于物体。
-- 掩码：`Full` 完整、`E` 遮眼、`N` 遮鼻、`M` 遮嘴。
-- 压缩比：2、4、8、16、32。
+### Grad-CAM / heatmap and ROI analysis
 
-基线文件命名为 `{AlexNet,VGG-16}-{FaceBased,ObjectBased}-{Full,E,N,M}-raw.csv`。
+Grad-CAM visualization and ROI saliency analysis. See <https://github.com/JyBmegan/GradCAM-ROI-SaliencyMapDecoder>.
 
-> 注：论文只报告全连接层插入（`Location-1/2/3`）。卷积层插入（`SE-Conv-L1~L4`，SE 加在卷积输出 256 通道上）为单独的消融实验，未写入论文；代码与结果见 `3_Ablation(Codes)/` 与 `4_Ablation(Results)/`。
+## Prediction-file naming
 
-## SE 模块
+```
+Location-{1,2,3}-{FaceBased,ObjectBased}-{Full,E,N,M}-{2,4,8,16,32}.csv
+{AlexNet,VGG-16}-{FaceBased,ObjectBased}-{Full,E,N,M}-raw.csv
+```
 
-SE 模块对通道特征做「压缩-激励」重标定：先全局平均池化得到通道向量 $z$，再经两个全连接层（中间降到 $C/r$ 维）得到通道权重，与原特征逐通道相乘：
+- Insertion location: `Location-1` early (before FC6), `Location-2` mid (between FC6 and FC7), `Location-3` late (between FC7 and FC8).
+- Pretraining: `FaceBased` (VGGFace2), `ObjectBased` (ImageNet).
+- Mask condition: `Full`, `E` (eyes), `N` (nose), `M` (mouth).
+- Reduction ratio: 2 / 4 / 8 / 16 / 32.
 
-$$
-s=\sigma\big(W_2\,\operatorname{ReLU}(W_1 z)\big),\qquad \hat{x}=x\odot s
-$$
+> The paper reports FC-layer insertion only (`Location-1/2/3`). Convolutional-layer insertion (`SE-Conv-L1~L4`) is a separate ablation not in the paper; see `3_Ablation(Codes)/` and `4_Ablation(Results)/`.
 
-其中 $r$ 为压缩比，$C/r$ 是压缩后的维度（例如 FC 层 4096 维、$r=16$ 时压缩到 256 维）。
+## Availability
+
+- Model weights: <https://huggingface.co/JiayuMBao/SE-AlexNet>
+- Psychometric-curve fitting: <https://github.com/JyBmegan/PsychometricFittingCurve>
+- Grad-CAM / ROI analysis: <https://github.com/JyBmegan/GradCAM-ROI-SaliencyMapDecoder>
+- Project page: <https://jybmegan.github.io/SE-AlexNet/>
+
+## Citation
+
+<!-- Citation to be added -->

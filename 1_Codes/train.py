@@ -41,8 +41,9 @@ def main():
     loss_val = []
     acc_val = []
 
-    batch_size = 128
-    learning_rate = 0.0001
+    # Hyperparameters reported in the manuscript for AffectNet fine-tuning.
+    batch_size = 64
+    learning_rate = 5e-5
     epochs = 40
     
     resume = False
@@ -53,10 +54,10 @@ def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("using {} device.".format(device))
 
-    train_dataset = affectnet(dataset_dir=r'/home/zhang/share/home/scz6112/AffectNet/train_set/images',
-                                         csv_path=r'/home/zhang/share/home/scz6112/AffectNet/AffectNet/modified_train_28000_sc.csv')
-    validate_dataset = affectnet(dataset_dir=r'/home/zhang/share/home/scz6112/AffectNet/val_set/images',
-                                         csv_path=r'/home/zhang/share/home/scz6112/AffectNet/AffectNet/modified_val_1000_sc.csv')
+    train_dataset = affectnet(dataset_dir=r'../AffectNet/train_set/images',  # TODO: replace with your AffectNet training images directory
+                                         csv_path=r'../AffectNet/AffectNet/modified_train_28000_sc.csv')  # TODO: replace with your AffectNet training labels CSV
+    validate_dataset = affectnet(dataset_dir=r'../AffectNet/val_set/images',  # TODO: replace with your AffectNet validation images directory
+                                         csv_path=r'../AffectNet/AffectNet/modified_val_1000_sc.csv')  # TODO: replace with your AffectNet validation labels CSV
 
     val_num = len(validate_dataset)
     train_num = len(train_dataset)
@@ -80,12 +81,27 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print (AlexNetWithSE().to(device))
 
-    model_weight_path = '/media/zhang/97e9fbd4-1a76-43b2-a56c-570c3f238fa9/yfLi/project-paper3/weights/face/AlexNet.pth'    # check step 3: obj or face transformer
-    pre_weights = torch.load(model_weight_path)
-    # pre_dict = {k: v for k, v in pre_weights.items() if "classifier" not in k}
-    # print(pre_dict)
-    # missing_keys,unexpected_keys = net.load_state_dict(pre_dict, strict=False)
-    # print(net)
+    model_weight_path = '../weights/face/AlexNet.pth'    # check step 3: obj or face transformer  # TODO: replace with your model weights (.pth)
+    pre_weights = torch.load(model_weight_path, map_location=device)
+    if isinstance(pre_weights, dict) and "state_dict" in pre_weights:
+        pre_weights = pre_weights["state_dict"]
+
+    # Load every pretrained tensor whose name and shape match the current
+    # two-class SE-AlexNet. Newly introduced or resized layers keep their
+    # PyTorch initialization and are optimized during fine-tuning.
+    model_state = net.state_dict()
+    compatible_weights = {
+        name: value
+        for name, value in pre_weights.items()
+        if name in model_state and model_state[name].shape == value.shape
+    }
+    missing_keys, unexpected_keys = net.load_state_dict(
+        compatible_weights, strict=False
+    )
+    print(
+        f"Loaded {len(compatible_weights)} pretrained tensors; "
+        f"missing={len(missing_keys)}, unexpected={len(unexpected_keys)}"
+    )
     # net.classifier._modules['5'] = nn.Linear(4096, 11)  #revise 4096 to 1000 to match last nn.linear
     for param in net.features.parameters():
         param.requires_grad = False
@@ -186,7 +202,7 @@ def main():
     names = ['loss_train','loss_val','acc_train','acc_val']
 
     df = pd.DataFrame(data=record)
-    df.to_csv('/home/zhang/share/home/scz6112/AffectNet/ALLResultsCollection/ClassifiedWithCondition/SELocate-1/FaceBased/squeeze-32/traindata.csv')  # check step 4: move the file to the correct folder after training
+    df.to_csv('../AffectNet/ALLResultsCollection/ClassifiedWithCondition/SELocate-1/FaceBased/squeeze-32/traindata.csv')  # check step 4: move the file to the correct folder after training  # TODO: replace with your output directory
 
     print('Finished Training')
 

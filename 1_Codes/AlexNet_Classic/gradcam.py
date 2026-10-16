@@ -132,7 +132,7 @@ class GradCam():
 
 
 if __name__ == '__main__':
-    base_output_dir = "/media/zhang/97e9fbd4-1a76-43b2-a56c-570c3f238fa9/se-alexnet/GradCAMHeatMap/Output"   
+    base_output_dir = "../../results/GradCAMHeatMap"     # TODO: replace with your output directory
 
     exp_name = "AlexNet-ObjectBased-raw-E"                                                              # check point 8
 
@@ -146,9 +146,9 @@ if __name__ == '__main__':
     if not os.path.exists(datapoint_save_dir):
         os.makedirs(datapoint_save_dir)
     
-    for i, filename in enumerate(os.listdir('/home/zhang/share/home/scz6112/AffectNet/ALLResultsCollection/ClassifiedWithCondition/input_images/E'), 1):  # check point 4: Full or M or N or E
+    for i, filename in enumerate(os.listdir('../../AffectNet/ALLResultsCollection/ClassifiedWithCondition/input_images/E'), 1):  # check point 4: Full or M or N or E  # TODO: replace with your input face images directory
     #for i in range(300):
-        img_path = '/home/zhang/share/home/scz6112/AffectNet/ALLResultsCollection/ClassifiedWithCondition/input_images/E/' + str(filename)  # check point 7: Full or M or N or E
+        img_path = '../../AffectNet/ALLResultsCollection/ClassifiedWithCondition/input_images/E/' + str(filename)  # check point 7: Full or M or N or E  # TODO: replace with your input face images directory
         #img_path = './input_images/vmer/A_11gr.jpg'
         file_name_to_export = img_path[img_path.rfind('/')+1:img_path.rfind('.')]
         # Read image
@@ -164,7 +164,7 @@ if __name__ == '__main__':
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         print (AlexNet().to(device))
         # load model weights
-        weights_path = "/home/zhang//share/home/scz6112/AffectNet/ALLResultsCollection/ClassifiedWithCondition/RawAlexNet/ObjectBased/AlexNet.pth"  # check point 5: SE Location/ Face or Object/ squeeze
+        weights_path = "../../AffectNet/ALLResultsCollection/ClassifiedWithCondition/RawAlexNet/ObjectBased/AlexNet.pth"  # check point 5: SE Location/ Face or Object/ squeeze  # TODO: replace with your model weights (.pth)
         assert os.path.exists(weights_path), "file: '{}' dose not exist.".format(weights_path)
         model.load_state_dict(torch.load(weights_path), strict = False)
 

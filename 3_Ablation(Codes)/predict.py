@@ -40,7 +40,7 @@ def main():
     # mask_con = "Full" # Check point
 
     exp_name = f"SeC{current_se_pos}_{trans_con}Based_squeeze{squeeze_ratio}"
-    root_path = r'/home/zhang/share/home/scz6112/AffectNet/ConvResults'
+    root_path = r'../AffectNet/ConvResults'  # TODO: replace with your output directory
     exp_dir = os.path.join(root_path, exp_name)
     inf_dir = os.path.join(exp_dir, 'predict')
 
@@ -65,7 +65,7 @@ def main():
 
     for i in range(21):
         print(i)
-        img_path = f"/home/zhang/share/home/scz6112/AffectNet/test_data/{mask_con}/{mask_con}_" +str(i+1) + ".jpg"
+        img_path = f"../AffectNet/test_data/{mask_con}/{mask_con}_" +str(i+1) + ".jpg"  # TODO: replace with your input face images directory
         #img_path = "./f" + str(i+1) + ".jpg"
         assert os.path.exists(img_path), "file: '{}' dose not exist.".format(img_path)
         img = Image.open(img_path)

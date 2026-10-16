@@ -124,7 +124,7 @@ if __name__ == '__main__':
     trans_con = "Face" # Check point
     mask_con = "Full" # Check point
     exp_name = f"SeC{current_se_pos}_{trans_con}Based_squeeze{squeeze_ratio}"
-    root_path = r'/home/zhang/share/home/scz6112/AffectNet/ConvResults'
+    root_path = r'../AffectNet/ConvResults'  # TODO: replace with your output directory
     exp_dir = os.path.join(root_path, exp_name)
     weights_path = os.path.join(exp_dir, 'AlexNet.pth')
     gradcam_dir = os.path.join(exp_dir, 'gradcam')
@@ -148,9 +148,9 @@ if __name__ == '__main__':
     target_layer_id = find_last_conv_layer(model)
     grad_cam = GradCam(model, target_layer=target_layer_id)
     
-    for i, filename in enumerate(sorted(os.listdir(f'/home/zhang/share/home/scz6112/AffectNet/test_data/{mask_con}')), 1): 
+    for i, filename in enumerate(sorted(os.listdir(f'../AffectNet/test_data/{mask_con}')), 1):   # TODO: replace with your input face images directory
     #for i in range(300):
-        img_path = f"/home/zhang/share/home/scz6112/AffectNet/test_data/{mask_con}/" + str(filename) 
+        img_path = f"../AffectNet/test_data/{mask_con}/" + str(filename)   # TODO: replace with your input face images directory
         #img_path = './input_images/vmer/A_11gr.jpg'
         file_name_to_export = img_path[img_path.rfind('/')+1:img_path.rfind('.')]
         # Read image

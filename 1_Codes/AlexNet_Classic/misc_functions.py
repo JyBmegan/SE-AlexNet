@@ -49,7 +49,7 @@ def convert_to_grayscale(im_as_arr):
 #         gradient (np arr): Numpy array of the gradient with shape (3, 224, 224)
 #         file_name (str): File name to be exported
 #     """
-#     base_output_path = "/home/zhang/share/home/scz6112/AffectNet/ALLResultsCollection/ClassifiedWithCondition/RawAlexNet/FaceBased/gradCAM/E" # check point 2: SE Location / Face or Object / squeeze / Full or M or N or E
+#     base_output_path = "../../AffectNet/ALLResultsCollection/ClassifiedWithCondition/RawAlexNet/FaceBased/gradCAM/E" # check point 2: SE Location / Face or Object / squeeze / Full or M or N or E
 #     os.makedirs(base_output_path,exist_ok=True)
 #     # Normalize
 #     gradient = gradient - gradient.min()
@@ -68,7 +68,7 @@ def save_class_activation_images(org_img, activation_map, file_name,i):
         activation_map (numpy arr): Activation map (grayscale) 0-255
         file_name (str): File name of the exported image
     """
-    base_output_path = "/home/zhang/share/home/scz6112/AffectNet/ALLResultsCollection/ClassifiedWithCondition/RawAlexNet/ObjectBased/gradCAM/E" # check point 3: SE Location / Face or Object / squeeze / Full or M or N or E
+    base_output_path = "../../AffectNet/ALLResultsCollection/ClassifiedWithCondition/RawAlexNet/ObjectBased/gradCAM/E" # check point 3: SE Location / Face or Object / squeeze / Full or M or N or E  # TODO: replace with your output directory
     os.makedirs(base_output_path,exist_ok=True)
         # Grayscale activation map
     heatmap, heatmap_on_image = apply_colormap_on_image(org_img, activation_map, 'jet')
@@ -279,7 +279,7 @@ def get_example_params():
     # model = efficientnetv2_s(num_classes=2)
 
     # load model weights
-    weights_path = "~/share/home/scz6112/AffectNet/ALLResultsCollection/ClassifiedWithCondition/SELocate-3-best/pytorch-cnn-visualizations-master/AlexNet.pth"
+    weights_path = "../../AffectNet/ALLResultsCollection/ClassifiedWithCondition/SELocate-3-best/pytorch-cnn-visualizations-master/AlexNet.pth"  # TODO: replace with your model weights (.pth)
     assert os.path.exists(weights_path), "file: '{}' dose not exist.".format(weights_path)
     model.load_state_dict(torch.load(weights_path))
     pretrained_model = model

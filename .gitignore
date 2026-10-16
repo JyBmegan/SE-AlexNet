@@ -5,3 +5,12 @@ __pycache__/
 ~$*
 * copy*
 
+# Internal authoring / submission materials (not for the public repo)
+analysis_and_writing/
+.gitignore.save
+CollectionOfROIAnalysis.pptx
+CheckList4Train&Predict&GradCAM.xlsx
+
+# Generated artifacts
+2_Results/Prediction_Archive_Manifest.csv
+
