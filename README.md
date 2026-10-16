@@ -43,6 +43,8 @@ python3 1_Codes/train.py
 
 基线文件命名为 `{AlexNet,VGG-16}-{FaceBased,ObjectBased}-{Full,E,N,M}-raw.csv`。
 
+> 注：论文只报告全连接层插入（`Location-1/2/3`）。卷积层插入（`SE-Conv-L1~L4`，SE 加在卷积输出 256 通道上）为单独的消融实验，未写入论文；代码与结果见 `3_Ablation(Codes)/` 与 `4_Ablation(Results)/`。
+
 ## SE 模块
 
 SE 模块对通道特征做「压缩-激励」重标定：先全局平均池化得到通道向量 $z$，再经两个全连接层（中间降到 $C/r$ 维）得到通道权重，与原特征逐通道相乘：
