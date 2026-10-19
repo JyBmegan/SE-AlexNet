@@ -14,11 +14,9 @@ This repository contains the code and results for the paper *A squeeze-and-excit
 | Path | Contents |
 | :--- | :--- |
 | `0_InputImages/` | 21 test faces per condition (`Full`, `E`, `N`, `M`) |
-| `1_Codes/` | AlexNet, VGG16, and SE-AlexNet (three FC insertion locations) code, plus the training script and Grad-CAM scripts |
-| `2_Results/` | Training curves, 136 prediction CSVs, Grad-CAM heatmaps and numeric data |
-| `3_Ablation(Codes)/` `4_Ablation(Results)/` | Convolutional-layer SE ablation (`SE-Conv-L1~L4`, not in the paper) |
-| `5_FittingCurveAnalysis/` | Copy of the psychometric-curve fitting code and its data/results (canonical code lives in a separate repo, see below) |
-| `scripts/` | Validation script for the prediction archive |
+| `1_Codes/` | AlexNet, VGG16, and the three archived SE-AlexNet model-family definitions, plus the training and Grad-CAM scripts |
+| `2_Results/` | Training curves and the 136 prediction CSVs used by the paper |
+| `scripts/` | Validation and public-release audit scripts |
 | `docs/` | GitHub Pages project page |
 
 ## Reproduce
@@ -29,35 +27,61 @@ This repository contains the code and results for the paper *A squeeze-and-excit
 pip install -r requirements.txt
 ```
 
-### Train
+### Reproduce the reported tables and statistics
 
-The FC-layer SE models (the paper) use `1_Codes/train.py`. Before running it, copy `se_model.py` and `mydataset.py` from `3_Ablation(Codes)/` into the same directory, and set the AffectNet dataset and pretrained-weight paths (they are hard-coded absolute paths in the script). Then:
+Retraining is not required to reproduce the paper's numerical results. The 136
+archived prediction files in `2_Results/1_Predict21Datapoints/` are the inputs
+to the public analysis repositories.
 
-```bash
-python 1_Codes/train.py
-```
-
-The convolutional-layer SE ablation (not in the paper) lives in `3_Ablation(Codes)/` and takes command-line arguments:
-
-```bash
-cd 3_Ablation(Codes)
-python run_all.py                                            # run every condition
-python train.py --se_pos 1 --reduction 16 --trans Face        # one condition
-```
-
-### Predict
-
-Prediction writes one 21-row CSV of "happy" probabilities per condition. The archived outputs are in `2_Results/1_Predict21Datapoints/` (120 SE-AlexNet conditions + 16 baselines). Check the archive with:
+First validate the complete prediction archive:
 
 ```bash
 python3 scripts/validate_prediction_archive.py
 ```
 
-For the convolutional-layer ablation, run:
+Then use the two companion repositories:
+
+1. [PsychometricFittingCurve](https://github.com/JyBmegan/PsychometricFittingCurve)
+   recomputes all PSE, fit-quality, RMSE, ΔPSE, ANOVA, and post-hoc tables.
+2. [GradCAM-ROI-SaliencyMapDecoder](https://github.com/JyBmegan/GradCAM-ROI-SaliencyMapDecoder)
+   recomputes the manuscript ROI statistics from the archived Grad-CAM values.
+
+The released checkpoints, configuration files, and canonical model-loading code
+are available in the [SE-AlexNet model repository on Hugging Face](https://huggingface.co/JiayuMBao/SE-AlexNet).
+
+### Model-location definitions in the released code
+
+For reproducibility, the location names below describe the tensors used by the
+released code and checkpoints:
+
+- `Location-1`: SE is applied to the 256-channel feature maps after the final
+  convolutional block and before flattening / FC6.
+- `Location-2`: SE is applied to the 4096-dimensional vector between FC6 and
+  FC7. In the archived definition and released checkpoints, this block uses
+  reduction 16; the `R2`--`R32` names are retained experimental labels.
+- `Location-3`: SE is also applied to the 256-channel feature maps after the
+  final convolutional block and before flattening / FC6. It is a separately
+  trained model family, but not a third tensor insertion site in the released
+  architecture.
+
+The exact executable definitions are the source of truth for model loading.
+
+### Train and predict
+
+Full retraining requires the licensed AffectNet images and labels, which are not
+redistributed here. The original training record is `1_Codes/train.py`; the
+three archived model-family definitions are in `1_Codes/SEAlexNetLocation1/`,
+`1_Codes/SEAlexNetLocation2/`, and `1_Codes/SEAlexNetLocation3/`. These archival
+scripts retain local path placeholders and are provided for methodological
+traceability. They are not required to reproduce the reported result tables.
+For evaluation without retraining, use the released checkpoints, configuration
+files, and loader on Hugging Face. Prediction writes one 21-row CSV of "happy"
+probabilities per condition. The public archive in
+`2_Results/1_Predict21Datapoints/` contains 120 SE-AlexNet conditions and 16
+baselines. Check the archive with:
 
 ```bash
-cd 3_Ablation(Codes)
-python predict.py --se_pos 1 --reduction 16 --trans Face --mask Full
+python3 scripts/validate_prediction_archive.py
 ```
 
 ### Psychometric-curve fitting
@@ -75,12 +99,10 @@ Location-{1,2,3}-{FaceBased,ObjectBased}-{Full,E,N,M}-{2,4,8,16,32}.csv
 {AlexNet,VGG-16}-{FaceBased,ObjectBased}-{Full,E,N,M}-raw.csv
 ```
 
-- Insertion location: `Location-1` early (before FC6), `Location-2` mid (between FC6 and FC7), `Location-3` late (between FC7 and FC8).
+- Model family: `Location-1`, `Location-2`, or `Location-3`; see the released-code definitions above for their actual tensor insertion sites.
 - Pretraining: `FaceBased` (VGGFace2), `ObjectBased` (ImageNet).
 - Mask condition: `Full`, `E` (eyes), `N` (nose), `M` (mouth).
 - Reduction ratio: 2 / 4 / 8 / 16 / 32.
-
-> The paper reports FC-layer insertion only (`Location-1/2/3`). Convolutional-layer insertion (`SE-Conv-L1~L4`) is a separate ablation not in the paper; see `3_Ablation(Codes)/` and `4_Ablation(Results)/`.
 
 ## Availability
 
@@ -88,6 +110,22 @@ Location-{1,2,3}-{FaceBased,ObjectBased}-{Full,E,N,M}-{2,4,8,16,32}.csv
 - Psychometric-curve fitting: <https://github.com/JyBmegan/PsychometricFittingCurve>
 - Grad-CAM / ROI analysis: <https://github.com/JyBmegan/GradCAM-ROI-SaliencyMapDecoder>
 - Project page: <https://jybmegan.github.io/SE-AlexNet/>
+
+## Public-release scope
+
+The public repository contains only the files needed to validate the prediction
+archive and connect it to the two companion analyses. It intentionally excludes
+licensed training images, checkpoints, manuscript and submission materials,
+generated Grad-CAM image archives, duplicate analysis folders, and legacy
+ablation outputs. Checkpoints and the canonical model loader are linked from
+Hugging Face; current psychometric and ROI analysis live in their companion
+repositories.
+
+Before committing or publishing, run:
+
+```bash
+python3 scripts/audit_public_release.py
+```
 
 ## Citation
 

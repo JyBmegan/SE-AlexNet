@@ -30,10 +30,10 @@ const modelStates = {
     image: "assets/heatmaps/sealexnet-eyes-mouth-full-15.png",
     alt: "SE-AlexNet FaceBased Grad-CAM heatmap with eyes and mouth attention",
     kicker: "SE-AlexNet Location-3 R16",
-    title: "Late SE insertion concentrates evidence differently",
+    title: "Location-3 concentrates evidence differently",
     caption: "Grad-CAM heatmap from a Location-3 FaceBased R16 condition, selected for visible eye and mouth evidence.",
     text:
-      "Late SE insertion changes where visual evidence concentrates."
+      "The Location-3 model changes where visual evidence concentrates."
   }
 };
 
@@ -41,38 +41,38 @@ const roiStats = {
   Full: {
     label: "Full-face stimuli",
     values: [
-      ["Eyes", 0.0991988655052579, "#2bdad7"],
-      ["Nose", 0.09499713399226689, "#f0cf3f"],
-      ["Mouth", 0.08259077352165407, "#f16666"]
+      ["Eyes", 0.21261411485714285, "#2bdad7"],
+      ["Nose", 0.008528178, "#f0cf3f"],
+      ["Mouth", 0.033296798380952376, "#f16666"]
     ],
-    note: "Full faces distribute saliency across eyes, nose, and mouth, with eyes slightly higher in the aggregate ROI summary."
+    note: "Face-pretrained Location-3/R16 full-face stimuli show the largest mean share in the eyes ROI."
   },
   E: {
     label: "Eyes-masked stimuli",
     values: [
-      ["Eyes", 0.06356021169603061, "#2bdad7"],
-      ["Nose", 0.1002952228523284, "#f0cf3f"],
-      ["Mouth", 0.08744287633679274, "#f16666"]
+      ["Eyes", 0.02796001776190476, "#2bdad7"],
+      ["Nose", 0.030657087, "#f0cf3f"],
+      ["Mouth", 0.03568825842857143, "#f16666"]
     ],
-    note: "When the eye region is masked, saliency shifts toward remaining informative regions, especially nose and mouth."
+    note: "For eye-masked stimuli, the mean ROI shares are relatively even across the three predefined bands."
   },
   M: {
     label: "Mouth-masked stimuli",
     values: [
-      ["Eyes", 0.11924139726359918, "#2bdad7"],
-      ["Nose", 0.08828131345537334, "#f0cf3f"],
-      ["Mouth", 0.06523406982112628, "#f16666"]
+      ["Eyes", 0.2663587358095238, "#2bdad7"],
+      ["Nose", 0.06051111571428571, "#f0cf3f"],
+      ["Mouth", 0.0028780205238095238, "#f16666"]
     ],
-    note: "When the mouth is masked, average saliency rises in the eye region."
+    note: "For mouth-masked stimuli, the mean share is concentrated in the eyes ROI."
   },
   N: {
     label: "Nose-masked stimuli",
     values: [
-      ["Eyes", 0.112346980862488, "#2bdad7"],
-      ["Nose", 0.06741387068382867, "#f0cf3f"],
-      ["Mouth", 0.09159348543430441, "#f16666"]
+      ["Eyes", 0.004540437380952381, "#2bdad7"],
+      ["Nose", 0.0, "#f0cf3f"],
+      ["Mouth", 0.0, "#f16666"]
     ],
-    note: "When the nose is masked, saliency is carried more by eyes and mouth than by the unavailable nose band."
+    note: "For nose-masked stimuli, the current paper-matched input has near-zero mean values in all three predefined ROI bands."
   }
 };
 

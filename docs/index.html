@@ -36,9 +36,6 @@
           <h2>Squeeze-and-Excitation Algorithm</h2>
           <h2>for Efficient Face Recognition</h2>
           <div class="hero-actions" aria-label="Primary links">
-            <!--
-            <a class="button secondary" href="assets/paper/manuscript-anonymous.pdf"><i data-lucide="file-text"></i><span>Paper</span></a>
-            -->
             <a class="button secondary" href="https://github.com/JyBmegan/SE-AlexNet">
               <img class="github-mark" src="assets/github-mark.svg" alt="" aria-hidden="true">
               <span>GitHub</span>
@@ -49,7 +46,6 @@
               <span>Weights</span>
             </a>
           </div>
-          <h4>Author List: author anonymous were required druing peer review process</h4>
         </div>
 
         <div class="hero-visual" aria-label="Grad-CAM comparison preview">
@@ -100,19 +96,6 @@
           <p>ROI saliency and fitting curves connect attention with behavior.</p>
         </div>
       </section>
-
-      <!-- 
-      <section class="section-band paper-strip" id="paper">
-        <div>
-          <p class="eyebrow">Paper</p>
-          <h2>Manuscript and project record</h2>
-        </div>
-        <p>
-          The current private version links to the anonymous manuscript PDF for review-stage sharing. Replace it with a DOI,
-          preprint, or journal page when the paper is ready to circulate publicly.
-        </p>
-      </section>
-      -->
 
       <section class="section-band narrative" id="evidence">
         <div class="section-heading">
@@ -232,18 +215,6 @@
           </div>
         </div>
 
-        <div class="trend-panel">
-          <img src="assets/trends/se-conv-l1-r4-e-1-trend.jpg" alt="Vertical saliency distribution plot">
-          <div class="trend-copy">
-            <h3>Vertical Trend</h3>
-            <p>X-Axis: Accumulated Activation (Saliency Strength).</p>
-            <p>Y-Axis: Pixel Height (0 = Top of Face, 224 = Bottom of Face).</p>
-
-            <p>The black curve represents the distribution of attention from the top to the bottom of the face.</p>
-            <p>Gaussian Smoothing (Sigma=3) is applied to reduce noise.</p>
-            <p>If the black curve's peak aligns with the Red Band, the model is primarily focusing on the Mouth.</p>
-          </div>
-        </div>
       </section>
 
       <section class="section-band data-story" id="results">
@@ -253,7 +224,7 @@
 
         <div class="core-result">
           <p class="kicker">Core conclusion</p>
-          <h3>Late SE insertion changes the spatial evidence used by AlexNet while preserving a measurable behavioral readout.</h3>
+          <h3>The Location-3 model changes the spatial evidence used by AlexNet while preserving a measurable behavioral readout.</h3>
         </div>
 
         <div class="analysis-stack">
@@ -267,14 +238,10 @@
                 <span>Reproduce this analysis in our PsychometricFittingCurve repository.</span>
               </a>
             </div>
-            <div class="analysis-figures two-up">
+            <div class="analysis-figures">
               <figure>
                 <img src="assets/results/location-3-facebased-full-curve.png" alt="Psychometric fitting curve for Location-3 FaceBased full-face condition">
-                <figcaption>Late SE-AlexNet, FaceBased, full-face condition.</figcaption>
-              </figure>
-              <figure>
-                <img src="assets/results/se-fc-l3-facebased-full-curve.png" alt="Psychometric fitting curve for SE-FC L3 FaceBased full-face condition">
-                <figcaption>Additional SE insertion setting for comparison.</figcaption>
+                <figcaption>Location-3 SE-AlexNet, FaceBased, full-face condition.</figcaption>
               </figure>
             </div>
           </article>
@@ -301,7 +268,7 @@
             <div class="analysis-copy">
               <p class="kicker">Analysis 3</p>
               <h3>ROI and attention distribution</h3>
-              <p>ROI proportions are the main quantitative readout; trend plots show where the vertical peak lands.</p>
+              <p>ROI proportions are the paper's quantitative saliency readout for the Location-3/R16 conditions.</p>
               <a class="analysis-link" href="https://github.com/JyBmegan/GradCAM-ROI-SaliencyMapDecoder">
                 <img class="github-mark" src="assets/github-mark.svg" alt="" aria-hidden="true">
                 <span>Reproduce Grad-CAM and ROI saliency in our GradCAM-ROI-SaliencyMapDecoder repository.</span>
@@ -309,10 +276,10 @@
             </div>
             <div class="roi-analysis-layout">
               <div class="roi-figure-stack">
-                <figure>
-                  <img src="assets/results/roi-summary-chart.png" alt="Average ROI saliency by condition">
-                  <figcaption>Mean ROI saliency by masked-face condition.</figcaption>
-                </figure>
+                <div class="roi-takeaway">
+                  <span>Scope</span>
+                  <strong>Statistics are computed from the 105 paper-matched rows in the public ROI-analysis repository.</strong>
+                </div>
               </div>
               <div class="roi-side-evidence">
                 <div class="roi-takeaway">
@@ -348,7 +315,7 @@
       <section class="section-band cite-section" id="cite">
         <div class="section-heading compact">
           <h2>How to cite</h2>
-          <p>Please use the manuscript citation for this project.</p>
+          <p>Full citation information will be added when the paper has a public publication record.</p>
         </div>
         <div class="citation-grid">
           <article>
@@ -356,7 +323,7 @@
               title={},
               author={},
               year={},
-              note={Manuscript under review}
+              note={Publication details forthcoming}
             }</code></pre>
           </article>
         </div>
@@ -371,9 +338,6 @@
             the released files for evaluation and reproducibility.
           </p>
           <div class="access-links" aria-label="Core resources">
-          <!--
-            <a href="assets/paper/manuscript-anonymous.pdf"><i data-lucide="file-text"></i><span>Paper</span></a>
-          -->
             <a href="https://github.com/JyBmegan/SE-AlexNet">
               <img class="github-mark" src="assets/github-mark.svg" alt="" aria-hidden="true">
               <span>GitHub</span>

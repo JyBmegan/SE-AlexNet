@@ -11,6 +11,24 @@ analysis_and_writing/
 CollectionOfROIAnalysis.pptx
 CheckList4Train&Predict&GradCAM.xlsx
 
+# Files not for the public code repository
+*.xls
+*.xlsx
+*.docx
+*.pptx
+*.pdf
+*.fig
+*.pth
+*.pt
+*.ckpt
+private/
+legacy/
+2_Results/2_GradCAMHeatMap/
+2_Results/3_GradCAMDatapoints/
+3_Ablation(Codes)/
+4_Ablation(Results)/
+5_FittingCurveAnalysis/
+
 # Generated artifacts
 2_Results/Prediction_Archive_Manifest.csv
 
