@@ -1,370 +1,52 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SE-AlexNet | Squeeze-and-Excitation Algorithm for Efficient Face Recognition</title>
-    <meta
-      name="description"
-      content="A visual research page for SE-AlexNet, showing how channel-wise dimension reduction reshapes Grad-CAM attention and psychometric behavior in facial emotion recognition."
-    >
-    <meta property="og:title" content="SE-AlexNet">
-    <meta property="og:description" content="Dimension reduction reshapes how neural networks attend to facial emotion cues.">
-    <meta property="og:type" content="website">
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="#top" aria-label="SE-AlexNet home">
-        <span>SE-AlexNet</span>
-      </a>
-      <nav class="top-nav" aria-label="Page contents">
-        <a href="#evidence">Evidence</a>
-        <a href="#mechanism">Mechanism</a>
-        <a href="#roi">ROI</a>
-        <a href="#results">Results</a>
-        <a href="#cite">Cite</a>
-        <a href="#access">Access</a>
-      </nav>
-    </header>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SE-AlexNet | Facial emotion recognition</title>
+<meta name="description" content="SE-AlexNet experiments on reduction ratio, insertion position, emotion responses and facial-region attention.">
+<link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body>
+<header class="site-header"><a class="brand" href="#top">SE-AlexNet</a><nav aria-label="Page sections"><a href="#reduction">Reduction</a><a href="#position">Position</a><a href="#attention">Attention</a><a href="#resources">Resources</a><a href="#cite">Cite</a></nav></header>
+<main id="top">
+<section class="section hero"><h1>SE-AlexNet</h1><p class="hero-subtitle">Facial emotion recognition with channel recalibration</p>
+<p class="lead">We tested how SE reduction ratio, insertion position, and pretraining affect emotion responses. Masked faces and Grad-CAM then let us examine which facial regions contribute to those responses.</p>
+<div class="primary-links"><a href="https://github.com/JyBmegan/SE-AlexNet"><img src="assets/github-mark.svg" alt=""><span><strong>Code &amp; stimuli ↗</strong><small>GitHub</small></span></a><a href="https://huggingface.co/JiayuMBao/SE-AlexNet"><img src="assets/hf-logo.svg" alt=""><span><strong>Model files ↗</strong><small>Hugging Face</small></span></a></div></section>
 
-    <main id="top">
-      <section class="hero section-band">
-        <div class="hero-copy">
-          <h1>SE-AlexNet</h1>
-          <h2>Squeeze-and-Excitation Algorithm</h2>
-          <h2>for Efficient Face Recognition</h2>
-          <div class="hero-actions" aria-label="Primary links">
-            <a class="button secondary" href="https://github.com/JyBmegan/SE-AlexNet">
-              <img class="github-mark" src="assets/github-mark.svg" alt="" aria-hidden="true">
-              <span>GitHub</span>
-            </a>
-            <a class="button secondary" href="https://github.com/JyBmegan/SE-AlexNet/tree/main/0_InputImages"><i data-lucide="folder-open"></i><span>Dataset</span></a>
-            <a class="button secondary" href="https://huggingface.co/JiayuMBao/SE-AlexNet">
-              <img class="hf-mark" src="assets/hf-logo.svg" alt="" aria-hidden="true">
-              <span>Weights</span>
-            </a>
-          </div>
-        </div>
+<section class="section" id="reduction"><header class="section-heading"><h2>Reduction ratio and emotion response</h2><p class="section-subtitle">Experiment 1 · Face and object pretraining at R = 2, 4, 8, 16, and 32</p></header>
+<p>The SE gate rescales a feature vector before classification.</p>
+<div class="model-path" aria-label="Late insertion path"><span>AlexNet FC7</span><b>→</b><span>SE gate</span><b>→</b><span>FC8</span></div>
+<div class="formula-group"><div class="formula"><span>Feature recalibration</span><img src="assets/equations/01-recalibration.png?v=2" alt="Equation 1: feature recalibration"><span>(1)</span></div><div class="formula"><span>Reduction ratio</span><img src="assets/equations/02-reduction.png?v=2" alt="Equation 2: output width equals input width divided by R"><span>(2)</span></div></div>
+<p class="finding"><strong>Reported result.</strong> The face-pretrained, late-insertion model at R = 16 has PSE 0.51 and RMSE 0.09 in the full-face condition; mean human PSE is approximately 0.52.</p>
+<figure class="compact-figure pse-figure"><a href="assets/paper/figure1d-pse.png" target="_blank" rel="noopener"><img src="assets/paper/figure1d-pse.png" alt="PSE comparison in the final manuscript" loading="lazy"></a><figcaption>PSE comparison from the final manuscript. <a href="assets/paper/figure1d-pse.png" target="_blank" rel="noopener">Open full figure ↗</a></figcaption></figure>
+<figure class="result-figure curve"><a href="assets/results/location-3-facebased-full-curve.png" target="_blank" rel="noopener"><img src="assets/results/location-3-facebased-full-curve.png" alt="Psychometric curves for the face-pretrained late-insertion models" loading="lazy"></a><figcaption>Psychometric response curves · full-face condition. <a href="https://github.com/JyBmegan/PsychometricFittingCurve">Fitting code and data ↗</a></figcaption></figure>
+<details class="equation-details"><summary>Behavioral analysis equations (3–5)</summary><div class="formula-group"><div class="formula"><span>Psychometric curve</span><img src="assets/equations/03-psychometric.png?v=2" alt="Equation 3: psychometric response function" loading="lazy"><span>(3)</span></div><div class="formula"><span>Curve error</span><img src="assets/equations/04-rmse.png?v=2" alt="Equation 4: root mean square model–human curve error" loading="lazy"><span>(4)</span></div><div class="formula"><span>PSE difference</span><img src="assets/equations/05-delta-pse.png?v=2" alt="Equation 5: absolute difference between model and human PSE" loading="lazy"><span>(5)</span></div></div></details>
+</section>
 
-        <div class="hero-visual" aria-label="Grad-CAM comparison preview">
-          <div class="visual-stage">
-            <img src="assets/faces/full-15.jpg" alt="Aligned face stimulus">
-            <img src="assets/heatmaps/sealexnet-eyes-mouth-full-15.png" alt="SE-AlexNet Grad-CAM heatmap with eyes and mouth attention">
-            <span class="hero-roi hero-roi-eyes"></span>
-            <span class="hero-roi hero-roi-mouth"></span>
-            <div class="scanline"></div>
-          </div>
-          <div class="hero-caption">
-            <span>Input stimulus</span>
-            <span>SE-AlexNet attention</span>
-          </div>
-        </div>
-      </section>
+<section class="section" id="position"><header class="section-heading"><h2>SE insertion position</h2><p class="section-subtitle">Experiment 2 · Early, middle, and late insertion in the classifier pathway</p></header>
+<p>Late insertion places SE between FC7 and FC8.</p>
+<figure class="compact-figure insertion-figure"><a href="assets/paper/figure3-insertion.jpeg" target="_blank" rel="noopener"><img src="assets/paper/figure3-insertion.jpeg" alt="Final-manuscript comparison of SE insertion positions" loading="lazy"></a><figcaption>Insertion-position comparison from the final manuscript. <a href="assets/paper/figure3-insertion.jpeg" target="_blank" rel="noopener">Open full figure ↗</a></figcaption></figure></section>
 
-      <section class="summary-strip" aria-label="Study summary">
-        <div>
-          <strong>5</strong>
-          <span>architectures</span>
-        </div>
-        <div>
-          <strong>5</strong>
-          <span>reduction ratios</span>
-        </div>
-        <div>
-          <strong>4</strong>
-          <span>stimulus conditions</span>
-        </div>
-        <div>
-          <strong>21</strong>
-          <span>emotion-intensity samples</span>
-        </div>
-      </section>
+<section class="section" id="attention"><header class="section-heading"><h2>Occlusion and facial-region attention</h2><p class="section-subtitle">Experiment 3 · Four masking conditions, Grad-CAM, and region analysis</p></header>
+<p>Choose a pretraining source, insertion position, and reduction ratio. The four masking conditions update together using the representative panels in the manuscript’s Grad-CAM figure.</p>
+<div class="explorer-controls">
+  <div class="control-set" role="group" aria-label="Pretraining"><span>Pretraining</span><button type="button" data-group="pretraining" data-value="face" aria-pressed="true">Face</button><button type="button" data-group="pretraining" data-value="object" aria-pressed="false">Object</button></div>
+  <div class="control-set" role="group" aria-label="Model"><span>Model</span><button type="button" data-group="model" data-value="late" aria-pressed="true">Late</button><button type="button" data-group="model" data-value="middle" aria-pressed="false">Middle</button><button type="button" data-group="model" data-value="early" aria-pressed="false">Early</button><button type="button" data-group="model" data-value="alex" aria-pressed="false">AlexNet</button><button type="button" data-group="model" data-value="vgg" aria-pressed="false">VGG16</button></div>
+  <div class="control-set" role="group" aria-label="Reduction ratio"><span>Reduction</span><button type="button" data-group="reduction" data-value="2" aria-pressed="false">R2</button><button type="button" data-group="reduction" data-value="4" aria-pressed="false">R4</button><button type="button" data-group="reduction" data-value="8" aria-pressed="false">R8</button><button type="button" data-group="reduction" data-value="16" aria-pressed="true">R16</button><button type="button" data-group="reduction" data-value="32" aria-pressed="false">R32</button></div>
+</div>
+<p id="explorer-label" class="explorer-label" aria-live="polite"></p><div class="comparison-grid" id="comparison-grid" aria-label="Inputs and Grad-CAM results for the four conditions"></div>
+<p class="source-note">The unoverlaid inputs are aligned stimulus 11, included to explain each masking condition. The heatmaps are representative panels from final-manuscript Figure 7; the manuscript does not identify them as stimulus 11 or a same-image model comparison. <a href="assets/paper/figure7-gradcam.jpeg" target="_blank" rel="noopener">View complete Figure 7 ↗</a></p>
+<div class="roi-section"><h3>Region-level readout</h3><p>Grad-CAM saliency was summarized in fixed eye, nose, and mouth regions on aligned 224 × 224 stimuli. Coordinates are image pixels.</p>
+<div class="roi-layout"><figure class="roi-example"><div class="roi-image"><img src="assets/faces/full-1.jpg" alt="Aligned face showing the predefined eye, nose, and mouth regions" width="224" height="224" loading="lazy"><span class="roi-box eyes">Eyes</span><span class="roi-box nose">Nose</span><span class="roi-box mouth">Mouth</span></div><figcaption>ROI boundaries on an aligned face</figcaption></figure><table><thead><tr><th>Region</th><th>x</th><th>y</th></tr></thead><tbody><tr><th>Eyes</th><td>52–171</td><td>70–99</td></tr><tr><th>Nose</th><td>52–171</td><td>120–149</td></tr><tr><th>Mouth</th><td>52–171</td><td>169–199</td></tr></tbody></table></div>
+<p class="finding">For full faces, the reported diagnostic ratio was 0.95 ± 0.03 for face pretraining and 0.77 ± 0.03 for object pretraining (mean ± SEM; p &lt; 0.001). Eye-region saliency was 0.21 versus 0.07 (p = 0.006).</p>
+<details class="equation-details"><summary>Grad-CAM and ROI equations (6–9)</summary><div class="formula-group"><div class="formula"><span>Channel weight</span><img src="assets/equations/06-gradcam-weight.png?v=2" alt="Equation 6: Grad-CAM channel weight" loading="lazy"><span>(6)</span></div><div class="formula"><span>Activation map</span><img src="assets/equations/07-gradcam-map.png?v=2" alt="Equation 7: Grad-CAM activation map" loading="lazy"><span>(7)</span></div><div class="formula"><span>ROI saliency</span><img src="assets/equations/08-pos.png?v=2" alt="Equation 8: proportion of total saliency within a region of interest" loading="lazy"><span>(8)</span></div><div class="formula"><span>Diagnostic ratio</span><img src="assets/equations/09-diagnostic.png?v=2" alt="Equation 9: proportion of eye and mouth saliency among the three regions" loading="lazy"><span>(9)</span></div></div></details>
+<a class="text-link" href="https://github.com/JyBmegan/GradCAM-ROI-SaliencyMapDecoder">Grad-CAM and ROI analysis code and data ↗</a></div></section>
 
-      <section class="claim-strip" aria-label="Core claim">
-        <div>
-          <span>Question</span>
-          <p>Does channel-wise reduction change how CNNs use facial regions?</p>
-        </div>
-        <div>
-          <span>Visual evidence</span>
-          <p>Aligned stimuli make Grad-CAM differences directly comparable.</p>
-        </div>
-        <div>
-          <span>Quantification</span>
-          <p>ROI saliency and fitting curves connect attention with behavior.</p>
-        </div>
-      </section>
-
-      <section class="section-band narrative" id="evidence">
-        <div class="section-heading">
-          <h2>GradCAM Result</h2>
-          <h2>Explicit comparison between all conditions</h2>
-          <p>Same face, different models, directly comparable attention.</p>
-        </div>
-
-        <div class="compare-shell">
-          <div class="compare-controls" role="tablist" aria-label="Grad-CAM model selection">
-            <button class="compare-tab is-active" type="button" data-model="input" role="tab" aria-selected="true">
-              Stimulus
-            </button>
-            <button class="compare-tab" type="button" data-model="alexnet" role="tab" aria-selected="false">
-              AlexNet
-            </button>
-            <button class="compare-tab" type="button" data-model="vgg16" role="tab" aria-selected="false">
-              VGG16
-            </button>
-            <button class="compare-tab" type="button" data-model="sealexnet" role="tab" aria-selected="false">
-              SE-AlexNet
-            </button>
-          </div>
-          <div class="compare-grid">
-            <figure class="main-heatmap">
-              <img id="modelImage" src="assets/faces/full-15.jpg" alt="Full face stimulus">
-              <figcaption id="modelCaption">A 224 by 224 aligned full-face stimulus used for model probing</figcaption>
-            </figure>
-            <div class="model-notes">
-              <h3 id="modelTitle">Start with the same face</h3>
-              <p id="modelText">
-                The aligned input makes attention the visual variable
-              </p>
-              <div class="mini-grid" aria-label="Stimulus examples">
-                <img src="assets/faces/full-11.jpg" alt="Full-face stimulus example">
-                <img src="assets/faces/eyes-masked-11.jpg" alt="Eyes-masked stimulus example">
-                <img src="assets/faces/mouth-masked-11.jpg" alt="Mouth-masked stimulus example">
-                <img src="assets/faces/nose-masked-11.jpg" alt="Nose-masked stimulus example">
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-band split" id="mechanism">
-        <div class="section-heading compact">
-          <h2>SE blocks</h2>
-          <h2>Turn channels into a controlled bottleneck</h2>
-          <p>Channel descriptors are squeezed, excited, and used to reweight feature maps</p>
-          <div class="formula-stack" aria-label="SE-AlexNet equations">
-            <div class="formula">
-              x &isin; R<sup>B&times;C&times;H&times;W</sup>
-            </div>
-            <div class="formula">
-              z<sub>c</sub> = (H&middot;W)<sup>-1</sup>&Sigma;<sub>i,j</sub>x<sub>c</sub>(i,j)
-            </div>
-            <div class="formula">
-              s = &sigma;(W<sub>2</sub> &delta;(W<sub>1</sub>z)), &nbsp; W<sub>1</sub>: C &rarr; C/r
-            </div>
-            <div class="formula">
-              x' = x &odot; s
-            </div>
-          </div>
-        </div>
-        <div class="mechanism-diagram" aria-label="Squeeze and excitation mechanism">
-          <div class="se-flow" aria-label="SE insertion path">
-            <span>AlexNet feature maps</span>
-            <i data-lucide="arrow-right"></i>
-            <strong>SE channel gate</strong>
-            <i data-lucide="arrow-right"></i>
-            <span>Classifier readout</span>
-          </div>
-          <div class="step">
-            <strong>Insertion test</strong>
-            <span>SE blocks are inserted at candidate AlexNet locations</span>
-          </div>
-          <div class="step">
-            <strong>Reduction test</strong>
-            <span>r controls the channel bottleneck: 2, 4, 8, 16, and 32</span>
-          </div>
-          <div class="step">
-            <strong>Visual test</strong>
-            <span>Grad-CAM checks whether attention shifts on aligned faces</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-band roi-section" id="roi">
-        <div class="section-heading">
-          <h2>Attention Region</h2>
-          <h2>Measured where faces carry emotion cues</h2>
-          <p>Grad-CAM is summarized inside eyes, nose, and mouth bands on aligned 224 x 224 faces.</p>
-        </div>
-
-        <div class="roi-layout">
-          <div class="face-map" aria-label="ROI coordinate map">
-            <img src="assets/faces/full-1.jpg" alt="Face stimulus with ROI bands">
-            <span class="roi-band eyes">Eyes</span>
-            <span class="roi-band nose">Nose</span>
-            <span class="roi-band mouth">Mouth</span>
-          </div>
-          <div class="roi-copy">
-            <h3>Proportion of saliency</h3>
-            <p>A region score is the share of total Grad-CAM activation inside that ROI.</p>
-            <div class="formula formula-fraction" aria-label="Proportion of saliency equation">
-              <span>PoS<sub>ROI</sub> =</span>
-              <span class="fraction">
-                <span>&Sigma;<sub>(x,y)&isin;ROI</sub> L<sup>c</sup><sub>Grad-CAM</sub>(x,y)</span>
-                <span>&Sigma;<sub>x,y</sub> L<sup>c</sup><sub>Grad-CAM</sub>(x,y)</span>
-              </span>
-            </div>
-            <ul class="evidence-list">
-              <li>Eyes: x 52-171, y 70-99</li>
-              <li>Nose: x 52-171, y 120-149</li>
-              <li>Mouth: x 52-171, y 169-199</li>
-            </ul>
-          </div>
-        </div>
-
-      </section>
-
-      <section class="section-band data-story" id="results">
-        <div class="section-heading">
-          <h2>Results</h2>
-        </div>
-
-        <div class="core-result">
-          <p class="kicker">Core conclusion</p>
-          <h3>The Location-3 model changes the spatial evidence used by AlexNet while preserving a measurable behavioral readout.</h3>
-        </div>
-
-        <div class="analysis-stack">
-          <article class="analysis-block">
-            <div class="analysis-copy">
-              <p class="kicker">Analysis 1</p>
-              <h3>Psychometric fitting</h3>
-              <p>Curve shape summarizes model behavior across emotion intensity.</p>
-              <a class="analysis-link" href="https://github.com/JyBmegan/PsychometricFittingCurve">
-                <img class="github-mark" src="assets/github-mark.svg" alt="" aria-hidden="true">
-                <span>Reproduce this analysis in our PsychometricFittingCurve repository.</span>
-              </a>
-            </div>
-            <div class="analysis-figures">
-              <figure>
-                <img src="assets/results/location-3-facebased-full-curve.png" alt="Psychometric fitting curve for Location-3 FaceBased full-face condition">
-                <figcaption>Location-3 SE-AlexNet, FaceBased, full-face condition.</figcaption>
-              </figure>
-            </div>
-          </article>
-
-          <article class="analysis-block">
-            <div class="analysis-copy">
-              <p class="kicker">Analysis 2</p>
-              <h3>Training dynamics</h3>
-              <p>Accuracy and loss check that the visual effect is not detached from optimization.</p>
-            </div>
-            <div class="analysis-figures two-up">
-              <figure>
-                <img src="assets/metrics/location-3-face-r32-acc.jpg" alt="Training accuracy curve">
-                <figcaption>Accuracy, Location-3 FaceBased R32.</figcaption>
-              </figure>
-              <figure>
-                <img src="assets/metrics/location-3-face-r32-loss.jpg" alt="Training loss curve">
-                <figcaption>Loss, same training condition.</figcaption>
-              </figure>
-            </div>
-          </article>
-
-          <article class="analysis-block roi-block">
-            <div class="analysis-copy">
-              <p class="kicker">Analysis 3</p>
-              <h3>ROI and attention distribution</h3>
-              <p>ROI proportions are the paper's quantitative saliency readout for the Location-3/R16 conditions.</p>
-              <a class="analysis-link" href="https://github.com/JyBmegan/GradCAM-ROI-SaliencyMapDecoder">
-                <img class="github-mark" src="assets/github-mark.svg" alt="" aria-hidden="true">
-                <span>Reproduce Grad-CAM and ROI saliency in our GradCAM-ROI-SaliencyMapDecoder repository.</span>
-              </a>
-            </div>
-            <div class="roi-analysis-layout">
-              <div class="roi-figure-stack">
-                <div class="roi-takeaway">
-                  <span>Scope</span>
-                  <strong>Statistics are computed from the 105 paper-matched rows in the public ROI-analysis repository.</strong>
-                </div>
-              </div>
-              <div class="roi-side-evidence">
-                <div class="roi-takeaway">
-                  <span>Readout</span>
-                  <strong>ROI scores turn Grad-CAM from a heatmap into region-level evidence.</strong>
-                </div>
-                <div class="roi-takeaway muted">
-                  <span>Alignment</span>
-                  <strong>The same ROI bands make model-to-model attention shifts comparable.</strong>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="section-band explorer" aria-label="ROI statistics explorer">
-        <div class="section-heading compact">
-          <h2>Which region carries the strongest share?</h2>
-        </div>
-        <div class="explorer-layout">
-          <div class="condition-tabs" role="tablist" aria-label="Stimulus condition">
-            <button class="condition-tab is-active" type="button" data-condition="Full">Full</button>
-            <button class="condition-tab" type="button" data-condition="E">Eyes masked</button>
-            <button class="condition-tab" type="button" data-condition="M">Mouth masked</button>
-            <button class="condition-tab" type="button" data-condition="N">Nose masked</button>
-          </div>
-          <div class="roi-rank" id="barChart" aria-label="ROI saliency rank chart"></div>
-          <p class="chart-note" id="chartNote"></p>
-        </div>
-      </section>
-
-      <section class="section-band cite-section" id="cite">
-        <div class="section-heading compact">
-          <h2>How to cite</h2>
-          <p>Full citation information will be added when the paper has a public publication record.</p>
-        </div>
-        <div class="citation-grid">
-          <article>
-            <pre><code style="font-size: 14px;">@article{,
-              title={},
-              author={},
-              year={},
-              note={Publication details forthcoming}
-            }</code></pre>
-          </article>
-        </div>
-      </section>
-
-      <section class="section-band access" id="access">
-        <div class="access-card" id="weights">
-          <p class="eyebrow">Resources</p>
-          <h2>Open dataset & model weights</h2>
-          <p>
-            Code, Dataset and Model weights are publicly available on Github and Hugging Face for research use. Please cite the project and use
-            the released files for evaluation and reproducibility.
-          </p>
-          <div class="access-links" aria-label="Core resources">
-            <a href="https://github.com/JyBmegan/SE-AlexNet">
-              <img class="github-mark" src="assets/github-mark.svg" alt="" aria-hidden="true">
-              <span>GitHub</span>
-            </a>
-            <a href="https://github.com/JyBmegan/SE-AlexNet/tree/main/0_InputImages"><i data-lucide="folder-open"></i><span>Dataset</span></a>
-            <a href="https://huggingface.co/JiayuMBao/SE-AlexNet">
-              <img class="hf-mark" src="assets/hf-logo.svg" alt="" aria-hidden="true">
-              <span>Weights</span>
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <span>SE-AlexNet project page 2026-2027 | All rights reserved. </span>
-      <span>
-        <a href="mailto:jiayu.bao@my.cityu.edu.hk">Contact: jiayu.bao@my.cityu.edu.hk</a>
-      </span>
-    </footer>
-    <script src="script.js"></script>
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        if (window.lucide) {
-          window.lucide.createIcons({ strokeWidth: 1.8 });
-        }
-      });
-    </script>
-  </body>
-</html>
+<section class="section" id="resources"><header class="section-heading"><h2>Resources</h2><p class="section-subtitle">Code, data, analysis, and model files</p></header><div class="resource-list">
+<a href="https://github.com/JyBmegan/SE-AlexNet"><img src="assets/github-mark.svg" alt=""><strong>Code</strong><span>SE-AlexNet and stimuli ↗</span></a>
+<a href="https://github.com/JyBmegan/PsychometricFittingCurve/tree/main/Data"><img src="assets/github-mark.svg" alt=""><strong>Data</strong><span>Human and model responses ↗</span></a>
+<a href="https://github.com/JyBmegan/GradCAM-ROI-SaliencyMapDecoder"><img src="assets/github-mark.svg" alt=""><strong>Analysis</strong><span>Grad-CAM and ROI ↗</span></a>
+<a href="https://huggingface.co/JiayuMBao/SE-AlexNet"><img src="assets/hf-logo.svg" alt=""><strong>Weights</strong><span>Hugging Face ↗</span></a></div></section>
+<section class="section citation" id="cite"><header class="section-heading"><h2>Cite this work</h2></header><p>Publication details and a copyable reference will be added here when the final citation is available.</p></section>
+</main><footer><span>SE-AlexNet project page</span><a href="mailto:jiayu.bao@my.cityu.edu.hk">Contact</a></footer><script src="script.js?v=3"></script>
+</body></html>

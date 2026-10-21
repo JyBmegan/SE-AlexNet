@@ -1,186 +1,70 @@
-const modelStates = {
-  input: {
-    image: "assets/faces/full-15.jpg",
-    alt: "Full face stimulus",
-    kicker: "Stimulus",
-    title: "Start with the same face",
-    caption: "A 224 by 224 aligned full-face stimulus used for model probing.",
-    text:
-      "The aligned input makes attention the visual variable."
-  },
-  alexnet: {
-    image: "assets/heatmaps/alexnet-face-full-1.png",
-    alt: "AlexNet FaceBased Grad-CAM heatmap",
-    kicker: "Baseline AlexNet",
-    title: "Baseline attention gives the reference point",
-    caption: "Grad-CAM heatmap from the FaceBased AlexNet baseline.",
-    text:
-      "Baseline AlexNet sets the reference for the SE comparison."
-  },
-  vgg16: {
-    image: "assets/heatmaps/vgg16-face-full-1.png",
-    alt: "VGG16 FaceBased Grad-CAM heatmap",
-    kicker: "VGG16 baseline",
-    title: "A deeper benchmark checks that the effect is not a shallow-model artifact",
-    caption: "Grad-CAM heatmap from the FaceBased VGG16 baseline.",
-    text:
-      "VGG16 separates model depth from SE-based reweighting."
-  },
-  sealexnet: {
-    image: "assets/heatmaps/sealexnet-eyes-mouth-full-15.png",
-    alt: "SE-AlexNet FaceBased Grad-CAM heatmap with eyes and mouth attention",
-    kicker: "SE-AlexNet Location-3 R16",
-    title: "Location-3 concentrates evidence differently",
-    caption: "Grad-CAM heatmap from a Location-3 FaceBased R16 condition, selected for visible eye and mouth evidence.",
-    text:
-      "The Location-3 model changes where visual evidence concentrates."
-  }
-};
-
-const roiStats = {
-  Full: {
-    label: "Full-face stimuli",
-    values: [
-      ["Eyes", 0.21261411485714285, "#2bdad7"],
-      ["Nose", 0.008528178, "#f0cf3f"],
-      ["Mouth", 0.033296798380952376, "#f16666"]
-    ],
-    note: "Face-pretrained Location-3/R16 full-face stimuli show the largest mean share in the eyes ROI."
-  },
-  E: {
-    label: "Eyes-masked stimuli",
-    values: [
-      ["Eyes", 0.02796001776190476, "#2bdad7"],
-      ["Nose", 0.030657087, "#f0cf3f"],
-      ["Mouth", 0.03568825842857143, "#f16666"]
-    ],
-    note: "For eye-masked stimuli, the mean ROI shares are relatively even across the three predefined bands."
-  },
-  M: {
-    label: "Mouth-masked stimuli",
-    values: [
-      ["Eyes", 0.2663587358095238, "#2bdad7"],
-      ["Nose", 0.06051111571428571, "#f0cf3f"],
-      ["Mouth", 0.0028780205238095238, "#f16666"]
-    ],
-    note: "For mouth-masked stimuli, the mean share is concentrated in the eyes ROI."
-  },
-  N: {
-    label: "Nose-masked stimuli",
-    values: [
-      ["Eyes", 0.004540437380952381, "#2bdad7"],
-      ["Nose", 0.0, "#f0cf3f"],
-      ["Mouth", 0.0, "#f16666"]
-    ],
-    note: "For nose-masked stimuli, the current paper-matched input has near-zero mean values in all three predefined ROI bands."
-  }
-};
-
-const tabs = document.querySelectorAll(".compare-tab");
-const modelImage = document.querySelector("#modelImage");
-const modelCaption = document.querySelector("#modelCaption");
-const modelKicker = document.querySelector("#modelKicker");
-const modelTitle = document.querySelector("#modelTitle");
-const modelText = document.querySelector("#modelText");
-const modelOrder = ["input", "alexnet", "vgg16", "sealexnet"];
-let activeModelIndex = 0;
-let modelAutoplayTimer;
-
-function activateModel(modelKey) {
-  const state = modelStates[modelKey];
-  if (!state) return;
-
-  tabs.forEach((item) => {
-    const isActive = item.dataset.model === modelKey;
-    item.classList.toggle("is-active", isActive);
-    item.setAttribute("aria-selected", isActive ? "true" : "false");
+const controls = [...document.querySelectorAll('.control-set button')];
+const grid = document.querySelector('#comparison-grid');
+const label = document.querySelector('#explorer-label');
+const source = 'assets/paper/figure7-gradcam.jpeg';
+const groups = {early:117, middle:676, late:1227, alex:1830, vgg:1985};
+const ratios = [2,4,8,16,32];
+const selection = {pretraining:'face',model:'late',reduction:16};
+const conditions = [
+  {name:'Full face', input:'assets/faces/full-11.jpg'},
+  {name:'Eyes masked', input:'assets/faces/eyes-masked-11.jpg'},
+  {name:'Nose masked', input:'assets/faces/nose-masked-11.jpg'},
+  {name:'Mouth masked', input:'assets/faces/mouth-masked-11.jpg'}
+];
+function makeHeatmap(x,y,alt) {
+  const crop = document.createElement('div');
+  crop.className = 'paper-crop';
+  const image = document.createElement('img');
+  image.className = 'paper-crop-image';
+  image.src = source;
+  image.alt = alt;
+  image.width = 2125;
+  image.height = 1027;
+  image.loading = 'lazy';
+  image.style.left = `${-x / 101 * 100}%`;
+  image.style.top = `${-y / 101 * 100}%`;
+  crop.append(image);
+  return crop;
+}
+function updateExplorer() {
+  const {pretraining,model,reduction} = selection;
+  const baseline = model === 'alex' || model === 'vgg';
+  const ratioIndex = Math.max(0,ratios.indexOf(reduction));
+  controls.forEach(button => {
+    const active = String(selection[button.dataset.group]) === button.dataset.value;
+    button.setAttribute('aria-pressed',String(active));
+    if (button.dataset.group === 'reduction') button.disabled = baseline;
   });
-
-  modelImage.classList.add("is-fading");
-  window.setTimeout(() => {
-    modelImage.src = state.image;
-    modelImage.alt = state.alt;
-    modelCaption.textContent = state.caption;
-    if (modelKicker) {
-      modelKicker.textContent = state.kicker;
-    }
-    modelTitle.textContent = state.title;
-    modelText.textContent = state.text;
-    modelImage.classList.remove("is-fading");
-  }, 120);
-
-  activeModelIndex = modelOrder.indexOf(modelKey);
-}
-
-function advanceModel() {
-  activeModelIndex = (activeModelIndex + 1) % modelOrder.length;
-  activateModel(modelOrder[activeModelIndex]);
-}
-
-function stopModelAutoplay() {
-  window.clearInterval(modelAutoplayTimer);
-}
-
-function startModelAutoplay() {
-  stopModelAutoplay();
-  modelAutoplayTimer = window.setInterval(advanceModel, 3000);
-}
-
-tabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    activateModel(tab.dataset.model);
-    startModelAutoplay();
+  const modelName = {early:'early insertion',middle:'middle insertion',late:'late insertion',alex:'AlexNet',vgg:'VGG16'}[model];
+  label.textContent = `${pretraining === 'face' ? 'Face' : 'Object'}-pretrained · ${modelName}${baseline ? '' : ' · R = ' + reduction}`;
+  const x = groups[model] + (baseline ? 0 : ratioIndex * 101.4);
+  const rowStart = pretraining === 'face' ? 76 : 541;
+  const cards = conditions.map((condition,index) => {
+    const card = document.createElement('article');
+    card.className = 'compare-card';
+    const title = document.createElement('h3');
+    title.textContent = condition.name;
+    const inputFigure = document.createElement('figure');
+    const input = document.createElement('img');
+    input.src = condition.input;
+    input.alt = `Stimulus 11, ${condition.name.toLowerCase()}, without Grad-CAM overlay`;
+    input.width = 224; input.height = 224; input.loading = 'lazy';
+    const inputCaption = document.createElement('figcaption');
+    inputCaption.textContent = 'Input example';
+    inputFigure.append(input,inputCaption);
+    const mapFigure = document.createElement('figure');
+    mapFigure.append(makeHeatmap(x,rowStart+index*101.25,`Manuscript Grad-CAM example: ${label.textContent}, ${condition.name}`));
+    const mapCaption = document.createElement('figcaption');
+    mapCaption.textContent = 'Grad-CAM';
+    mapFigure.append(mapCaption);
+    card.append(title,inputFigure,mapFigure);
+    return card;
   });
-});
-
-if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  startModelAutoplay();
+  grid.replaceChildren(...cards);
 }
-
-const conditionTabs = document.querySelectorAll(".condition-tab");
-const barChart = document.querySelector("#barChart");
-const chartNote = document.querySelector("#chartNote");
-
-function renderChart(condition) {
-  const state = roiStats[condition];
-  const sortedValues = [...state.values].sort((a, b) => b[1] - a[1]);
-  const maxValue = sortedValues[0][1];
-  barChart.innerHTML = "";
-
-  sortedValues.forEach(([label, value, color]) => {
-    const row = document.createElement("div");
-    row.className = "rank-row";
-
-    const rowLabel = document.createElement("div");
-    rowLabel.className = "rank-label";
-    rowLabel.textContent = label;
-
-    const track = document.createElement("div");
-    track.className = "rank-track";
-
-    const fill = document.createElement("div");
-    fill.className = "rank-fill";
-    fill.style.background = color;
-    fill.style.width = `${Math.max(18, (value / maxValue) * 100)}%`;
-
-    const valueLabel = document.createElement("div");
-    valueLabel.className = "rank-value";
-    valueLabel.textContent = `${(value * 100).toFixed(1)}%`;
-
-    track.appendChild(fill);
-    row.append(rowLabel, track, valueLabel);
-    barChart.appendChild(row);
-  });
-
-  chartNote.textContent = state.note;
-}
-
-conditionTabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    conditionTabs.forEach((item) => item.classList.remove("is-active"));
-    tab.classList.add("is-active");
-    renderChart(tab.dataset.condition);
-  });
-});
-
-renderChart("Full");
+controls.forEach(button => button.addEventListener('click',() => {
+  const group = button.dataset.group;
+  selection[group] = group === 'reduction' ? Number(button.dataset.value) : button.dataset.value;
+  updateExplorer();
+}));
+updateExplorer();
