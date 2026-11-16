@@ -54,16 +54,12 @@ are available in the [SE-AlexNet model repository on Hugging Face](https://huggi
 For reproducibility, the location names below describe the tensors used by the
 released code and checkpoints:
 
-- `Location-1`: SE is applied to the 256-channel feature maps after the final
-  convolutional block and before flattening / FC6.
+- `Location-1`: SE is applied to the 256-channel feature maps before flattening / FC6.
 - `Location-2`: SE is applied to the 4096-dimensional vector between FC6 and
   FC7. In the archived definition and released checkpoints, this block uses
   reduction 16; the `R2`--`R32` names are retained experimental labels.
-- `Location-3`: SE is also applied to the 256-channel feature maps after the
-  final convolutional block and before flattening / FC6. It is a separately
-  trained model family, but not a third tensor insertion site in the released
-  architecture.
-
+- `Location-3`: SE is also applied to the 256-channel feature maps before the
+  final FC layer, between FC7 and FC8.
 The exact executable definitions are the source of truth for model loading.
 
 ### Train and predict
